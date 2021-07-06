@@ -40,6 +40,7 @@ async def mc(user):
     if i>0:
         return 21600//2
     return 21600
+
 # update bank details
 async def update_bank(user, change=0, mode='wallet'):
     users = await get_bank_data()
@@ -74,7 +75,7 @@ class Bank(commands.Cog):
     async def withdraw(self, ctx: commands.Context, amount=None):
         await open_account(ctx.author)
         if amount == None:
-            await ctx.send("Please use -withdraw [amount] " + ctx.message.author.mention)
+            await ctx.send("Please use withdraw <amount> " + ctx.message.author.mention)
             return
 
         bal = await update_bank(ctx.author)
@@ -98,7 +99,7 @@ class Bank(commands.Cog):
     async def dep(self, ctx: commands.Context, amount=None):
         await open_account(ctx.author)
         if amount == None:
-            await ctx.send("Please use -withdraw [amount] " + ctx.message.author.mention)
+            await ctx.send("Please use withdraw <amount> " + ctx.message.author.mention)
             return
 
         bal = await update_bank(ctx.author)
@@ -123,7 +124,7 @@ class Bank(commands.Cog):
         await open_account(ctx.author)
         await open_account(member)
         if amount == None:
-            await ctx.send("**please use -send [mention_user] [amount] **" + ctx.message.author.mention)
+            await ctx.send("**please use send <mention_user> <amount> **" + ctx.message.author.mention)
             return
 
         bal = await update_bank(ctx.author)
@@ -145,24 +146,7 @@ class Bank(commands.Cog):
 
         await ctx.send(f"**You just sent {amount}!** " + ctx.message.author.mention)
 
-    # not using this
-    @commands.command(pass_context=True)
-    async def rob(self, ctx: commands.Context, member: discord.Member):
-        await open_account(ctx.author)
-        await open_account(member)
 
-        bal = await update_bank(member)
-
-        if bal[0] < 100:
-            await ctx.send("It's not worth it")
-            return
-
-        earnings = random.randrange(0, bal[0])
-
-        await update_bank(ctx.author, earnings)
-        await update_bank(member, -1 * earnings)
-
-        await ctx.send(f"you robbed and got {earnings} coins!")
 #---------------------------- GAMES -----------------------------#
 
     # spin(daily 4 rewards) and cool down(6 hrs=21600s)
@@ -179,7 +163,7 @@ class Bank(commands.Cog):
             json.dump(users, f)
         await ctx.channel.send("**You have won {} .Please check you wallet **".format(s) + ctx.message.author.mention)
 
-    # tada game (if two emojis matches out of three you can win)
+    # tada game (if two emojis matches out of three you may win)
     @commands.command(pass_context=True)
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def tada(self, ctx: commands.Context, amount=None):
@@ -354,8 +338,8 @@ class Bank(commands.Cog):
 
         emb = discord.Embed(title='Mining store',
                             description="Your staff : `{}`".format(stf)+" , " + "Your Machine : `{}`\n".format(
-                                mach) + '`p!upgrade staff` :upgrade staff for 50,000 and get 2x mining\n' +
-                                        "`p!upgrade machine` : upgrade machine for 2,00,000 and get mining boost (3hrs)\n"
+                                mach) + '`upgrade staff` :upgrade staff for 50,000 and get 2x mining\n' +
+                                        "`upgrade machine` : upgrade machine for 2,00,000 and get mining boost (3hrs)\n"
 
                             )
         await ctx.channel.send(embed=emb)

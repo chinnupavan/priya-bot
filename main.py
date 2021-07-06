@@ -92,7 +92,6 @@ async def on_command_error(ctx,error):
                 await ctx.send("Mining will end in : " + mes)
 
 
-    #await ctx.send("timee")
 #-----------------------simple commands-------------------------#
 @client.command()
 async def btc(ctx):
