@@ -16,8 +16,9 @@ from config import *
 client=commands.Bot(command_prefix=PREFIX)
 client.remove_command("help")
 
-a='8462722e8afe644'
-b='b4c0fcf8b4079f329ec943da3e70fe9ef67bec1f'
+#imgur client
+a=''
+b=''
 cc=ImgurClient(a,b)
 
 async def get_bank_data():
@@ -45,6 +46,7 @@ async def on_ready():
                 print(f"{e}")
 
 #-------------------------------message events---------------------------#
+#messages with prefix
 @client.event
 async def on_message(message):
     if not message.author.bot:
@@ -59,15 +61,6 @@ async def on_message(message):
                 url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=128".format(message.author))
             await message.channel.send(embed=embedd)
 
-        if 'p!nsfw' in message.content.lower():
-            if message.channel.is_nsfw():
-                it = cc.get_album_images('HtpJJL4')
-                m = random.choice(it)
-                em = discord.Embed()
-                em.set_image(url=m.link)
-                await message.channel.send(embed=em)
-            else:
-                await message.channel.send("Please use this command in NSFW channel"+message.author.mention)
 
 
     # to stop message event

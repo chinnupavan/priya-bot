@@ -1,2 +1,2 @@
-PREFIX='p!'
-TOKEN = ""
+PREFIX='p!' #prefix
+TOKEN = "your token"
