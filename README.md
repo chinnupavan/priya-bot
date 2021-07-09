@@ -1,7 +1,9 @@
 # priya-bot
 A multipurpose discord bot
 
+[![Discord Chat](https://img.shields.io/discord/861962453821816882?color=7289da&label=discord&logo=discord&logoColor=white)](https://discord.gg/BJX7bhE6FD)
 ![Views](https://visitor-badge.laobi.icu/badge?page_id=chinnupavan.priya-bot&title=Views)
+![Codelines](https://img.shields.io/tokei/lines/github/chinnupavan/priya-bot)
 
 Feel free to add a star ⭐ to the repository to promote the project!
 
