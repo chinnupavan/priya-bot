@@ -14,7 +14,7 @@ jobs:
           ref: ${{ github.head_ref }}
       - name: Format using PEP 8
         id: autoyapf
-        uses: mritunjaysharma394/autoyapf
+        uses: mritunjaysharma394/autoyapf@v2
         with:
           args: --style pep8 --recursive --in-place .
       - name: Commit and push changes
