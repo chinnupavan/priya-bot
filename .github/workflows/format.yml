@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.3.4
+        with:
+          ref: ${{ github.head_ref }}
       - name: Format using PEP 8
         id: autoyapf
         uses: mritunjaysharma394/autoyapf
