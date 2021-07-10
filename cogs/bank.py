@@ -12,6 +12,7 @@ async def get_bank_data():
 
     return users
 
+
 # opens an account
 async def open_account(user):
     users = await get_bank_data()
@@ -33,13 +34,15 @@ async def open_account(user):
 
     # returns json file details
 
+
 async def mc(user):
     users = await get_bank_data()
-    p=users[str(user.id)]["machine"]
-    i=int(p)
-    if i>0:
-        return 21600//2
+    p = users[str(user.id)]["machine"]
+    i = int(p)
+    if i > 0:
+        return 21600 // 2
     return 21600
+
 
 # update bank details
 async def update_bank(user, change=0, mode='wallet'):
@@ -51,21 +54,23 @@ async def update_bank(user, change=0, mode='wallet'):
             users[str(user.id)]["gold"], users[str(user.id)]["silver"]
     return bal
 
+
 class Bank(commands.Cog):
     """Returns random results"""
-
     def __init__(self, client):
-        self.client=client
+        self.client = client
 
 #----------------------------Bank--------------------------#
+
     @commands.command(pass_context=True)
-    async def bal(self,ctx:commands.Context):
+    async def bal(self, ctx: commands.Context):
         await open_account(ctx.author)
         user = ctx.author
         users = await get_bank_data()
         wallet_amt = users[str(user.id)]["wallet"]
         bank_amt = users[str(user.id)]["bank"]
-        embed = discord.Embed(title=f"{ctx.author.name}'s balance", color=0xFF69B4)
+        embed = discord.Embed(title=f"{ctx.author.name}'s balance",
+                              color=0xFF69B4)
         embed.add_field(name="Bank : ", value=bank_amt, inline=False)
         embed.add_field(name="Wallet : ", value=wallet_amt, inline=False)
         await ctx.send(embed=embed)
@@ -75,7 +80,8 @@ class Bank(commands.Cog):
     async def withdraw(self, ctx: commands.Context, amount=None):
         await open_account(ctx.author)
         if amount == None:
-            await ctx.send("Please use withdraw <amount> " + ctx.message.author.mention)
+            await ctx.send("Please use withdraw <amount> " +
+                           ctx.message.author.mention)
             return
 
         bal = await update_bank(ctx.author)
@@ -86,20 +92,23 @@ class Bank(commands.Cog):
             await ctx.send("**Low balance! **" + ctx.message.author.mention)
             return
         if amount < 0:
-            await ctx.send("**Use positive number **" + ctx.message.author.mention)
+            await ctx.send("**Use positive number **" +
+                           ctx.message.author.mention)
             return
 
         await update_bank(ctx.author, amount)
         await update_bank(ctx.author, -1 * amount, "bank")
 
-        await ctx.send(f"**Done! Added {amount} to wallet! **" + ctx.message.author.mention)
+        await ctx.send(f"**Done! Added {amount} to wallet! **" +
+                       ctx.message.author.mention)
 
     # dep
     @commands.command(pass_context=True)
     async def dep(self, ctx: commands.Context, amount=None):
         await open_account(ctx.author)
         if amount == None:
-            await ctx.send("Please use withdraw <amount> " + ctx.message.author.mention)
+            await ctx.send("Please use withdraw <amount> " +
+                           ctx.message.author.mention)
             return
 
         bal = await update_bank(ctx.author)
@@ -110,21 +119,27 @@ class Bank(commands.Cog):
             await ctx.send("**Low balance! **" + ctx.message.author.mention)
             return
         if amount < 0:
-            await ctx.send("**Use positive number **" + ctx.message.author.mention)
+            await ctx.send("**Use positive number **" +
+                           ctx.message.author.mention)
             return
 
         await update_bank(ctx.author, -1 * amount)
         await update_bank(ctx.author, amount, "bank")
 
-        await ctx.send(f"**Done! Deposited {amount}!** " + ctx.message.author.mention)
+        await ctx.send(f"**Done! Deposited {amount}!** " +
+                       ctx.message.author.mention)
 
     # transfer
     @commands.command(pass_context=True)
-    async def send(self, ctx: commands.Context, member: discord.Member, amount=None):
+    async def send(self,
+                   ctx: commands.Context,
+                   member: discord.Member,
+                   amount=None):
         await open_account(ctx.author)
         await open_account(member)
         if amount == None:
-            await ctx.send("**please use send <mention_user> <amount> **" + ctx.message.author.mention)
+            await ctx.send("**please use send <mention_user> <amount> **" +
+                           ctx.message.author.mention)
             return
 
         bal = await update_bank(ctx.author)
@@ -138,18 +153,20 @@ class Bank(commands.Cog):
             await ctx.send("**Low balance! **" + ctx.message.author.mention)
             return
         if amount < 0:
-            await ctx.send("**use positive number** " + ctx.message.author.mention)
+            await ctx.send("**use positive number** " +
+                           ctx.message.author.mention)
             return
 
         await update_bank(ctx.author, -1 * amount, "bank")
         await update_bank(member, amount, "bank")
 
-        await ctx.send(f"**You just sent {amount}!** " + ctx.message.author.mention)
-
+        await ctx.send(f"**You just sent {amount}!** " +
+                       ctx.message.author.mention)
 
 #---------------------------- GAMES -----------------------------#
 
-    # spin(daily 4 rewards) and cool down(6 hrs=21600s)
+# spin(daily 4 rewards) and cool down(6 hrs=21600s)
+
     @commands.command(pass_context=True)
     @commands.cooldown(1, 21600, commands.BucketType.user)
     async def spin(self, ctx: commands.Context):
@@ -161,7 +178,9 @@ class Bank(commands.Cog):
         users[str(user.id)]["wallet"] += earnings
         with open("bank.json", "w") as f:
             json.dump(users, f)
-        await ctx.channel.send("**You have won {} .Please check you wallet **".format(s) + ctx.message.author.mention)
+        await ctx.channel.send(
+            "**You have won {} .Please check you wallet **".format(s) +
+            ctx.message.author.mention)
 
     # tada game (if two emojis matches out of three you may win)
     @commands.command(pass_context=True)
@@ -169,7 +188,8 @@ class Bank(commands.Cog):
     async def tada(self, ctx: commands.Context, amount=None):
         await open_account(ctx.author)
         if amount == None:
-            await ctx.send("use format tada <amount> " + ctx.message.author.mention)
+            await ctx.send("use format tada <amount> " +
+                           ctx.message.author.mention)
             return
         bal = await update_bank(ctx.author)
         amount = int(amount)
@@ -182,26 +202,35 @@ class Bank(commands.Cog):
         final = []
 
         for i in range(3):
-            a = random.choice(
-                [":test_tube:", ":tada:", ":moneybag:", ":tokyo_tower:", ":airplane:", ":kite:", ":helicopter:"])
+            a = random.choice([
+                ":test_tube:", ":tada:", ":moneybag:", ":tokyo_tower:",
+                ":airplane:", ":kite:", ":helicopter:"
+            ])
             final.append(a)
-        s1=str(final[0])
-        s2=str(final[1])
-        s3=str(final[2])
+        s1 = str(final[0])
+        s2 = str(final[1])
+        s3 = str(final[2])
 
         #await ctx.send(str(final[0]," ",final(1)))
 
         if final[0] == final[1] or final[0] == final[2] or final[2] == final[1]:
             await update_bank(ctx.author, 1 * amount)
-            emb = discord.Embed(description="**Won!**    "+ctx.message.author.mention+"\n\n"+"[ "+s1+" , "+s2+" , "+s3+" ]\n")
+            emb = discord.Embed(description="**Won!**    " +
+                                ctx.message.author.mention + "\n\n" + "[ " +
+                                s1 + " , " + s2 + " , " + s3 + " ]\n")
             #await ctx.send("**WON! **" + ctx.message.author.mention)
             await ctx.send(embed=emb)
         else:
             await update_bank(ctx.author, -1 * amount)
-            emb = discord.Embed(description="**Lost!**    "+ctx.message.author.mention+"\n\n"+"[ "+s1+" , "+s2+" , "+s3+" ]\n")
+            emb = discord.Embed(description="**Lost!**    " +
+                                ctx.message.author.mention + "\n\n" + "[ " +
+                                s1 + " , " + s2 + " , " + s3 + " ]\n")
             #await ctx.send("**LOST! **" + ctx.message.author.mention)
             await ctx.send(embed=emb)
+
+
 #----------------------------------MINING----------------------#
+
     @commands.command(pass_context=True)
     async def bag(self, ctx: commands.Context):
         await open_account(ctx.author)
@@ -223,11 +252,12 @@ class Bank(commands.Cog):
     @commands.command(pass_context=True)
     @commands.cooldown(1, 21600, commands.BucketType.user)
     async def mining(self, ctx: commands.Context):
-        await ctx.channel.send("Mining started now ! " + ctx.message.author.mention)
+        await ctx.channel.send("Mining started now ! " +
+                               ctx.message.author.mention)
         users = await get_bank_data()
         val = users[str(ctx.author.id)]["machine"]
         if val >= 1:
-            await asyncio.sleep(21600//2)
+            await asyncio.sleep(21600 // 2)
             self.mining.reset_cooldown(ctx)
         else:
             await asyncio.sleep(21600)
@@ -249,8 +279,9 @@ class Bank(commands.Cog):
         users[str(user.id)]["silver"] += s
 
         await ctx.channel.send(
-            ctx.author.mention + "\nYour mining has done! you got\n`Diamonds :{0}`\n`Gold :{1}`\n`Silver :{2}`".format(
-                d, g, s))
+            ctx.author.mention +
+            "\nYour mining has done! you got\n`Diamonds :{0}`\n`Gold :{1}`\n`Silver :{2}`"
+            .format(d, g, s))
 
         with open("bank.json", "w") as f:
             json.dump(users, f)
@@ -274,7 +305,9 @@ class Bank(commands.Cog):
             elif diamond_count >= n:
                 users[str(user.id)]["bank"] += d_r * n
                 users[str(user.id)]["diamonds"] -= n
-                await ctx.channel.send("Daimonds has been sold for {}.Please check your Bank".format(d_r * n))
+                await ctx.channel.send(
+                    "Daimonds has been sold for {}.Please check your Bank".
+                    format(d_r * n))
         # Gold
         if arg.lower() == 'gold':
             gold_count = users[str(user.id)]["gold"]
@@ -283,7 +316,9 @@ class Bank(commands.Cog):
             elif gold_count >= n:
                 users[str(user.id)]["bank"] += g_r * n
                 users[str(user.id)]["gold"] -= n
-                await ctx.channel.send("Gold has been sold for {}.Please check your Bank".format(g_r * n))
+                await ctx.channel.send(
+                    "Gold has been sold for {}.Please check your Bank".format(
+                        g_r * n))
         # silver
         if arg.lower() == 'silver':
             silver_count = users[str(user.id)]["silver"]
@@ -292,7 +327,9 @@ class Bank(commands.Cog):
             elif silver_count >= n:
                 users[str(user.id)]["bank"] += s_r * n
                 users[str(user.id)]["silver"] -= n
-                await ctx.channel.send("Silver has been sold for {}.Please check your Bank".format(s_r * n))
+                await ctx.channel.send(
+                    "Silver has been sold for {}.Please check your Bank".
+                    format(s_r * n))
 
         with open("bank.json", "w") as f:
             json.dump(users, f)
@@ -309,19 +346,23 @@ class Bank(commands.Cog):
             balance = users[str(user.id)]["bank"]
             if args.lower() == "staff":
                 if balance < 50000:
-                    await ctx.channel.send("Your bank balance is low! " + ctx.message.author.mention)
+                    await ctx.channel.send("Your bank balance is low! " +
+                                           ctx.message.author.mention)
                 else:
                     users[str(user.id)]["staff"] += 1
                     users[str(user.id)]["bank"] -= 50000
-                    await ctx.channel.send("Upgraded staff! " + ctx.message.author.mention)
+                    await ctx.channel.send("Upgraded staff! " +
+                                           ctx.message.author.mention)
 
             elif args.lower() == "machine":
                 if balance < 100000:
-                    await ctx.channel.send("Your bank balance is low! " + ctx.message.author.mention)
+                    await ctx.channel.send("Your bank balance is low! " +
+                                           ctx.message.author.mention)
                 else:
                     users[str(user.id)]["machine"] += 1
                     users[str(user.id)]["bank"] -= 100000
-                    await ctx.channel.send("Upgraded Machine! " + ctx.message.author.mention)
+                    await ctx.channel.send("Upgraded Machine! " +
+                                           ctx.message.author.mention)
 
             with open("bank.json", "w") as f:
                 json.dump(users, f)
@@ -336,13 +377,15 @@ class Bank(commands.Cog):
         stf = users[str(user.id)]["staff"]
         mach = users[str(user.id)]["machine"]
 
-        emb = discord.Embed(title='Mining store',
-                            description="Your staff : `{}`".format(stf)+" , " + "Your Machine : `{}`\n".format(
-                                mach) + '`upgrade staff` :upgrade staff for 50,000 and get 2x mining\n' +
-                                        "`upgrade machine` : upgrade machine for 2,00,000 and get mining boost (3hrs)\n"
-
-                            )
+        emb = discord.Embed(
+            title='Mining store',
+            description="Your staff : `{}`".format(stf) + " , " +
+            "Your Machine : `{}`\n".format(mach) +
+            '`upgrade staff` :upgrade staff for 50,000 and get 2x mining\n' +
+            "`upgrade machine` : upgrade machine for 2,00,000 and get mining boost (3hrs)\n"
+        )
         await ctx.channel.send(embed=emb)
+
 
 def setup(client):
     client.add_cog(Bank(client))
