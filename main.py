@@ -27,11 +27,15 @@ async def get_bank_data():
 
     return users
 
+@tasks.loop(minutes=15)
+async def change_pr():
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"p!help | {len(client.guilds)} servers"))
+
 
 #bot login
 @client.event
 async def on_ready():
-    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="p!help"))
+    change_pr().start()
     print(f"We have logged in as {client.user}")
     global s
     s = time.time()
