@@ -9,7 +9,7 @@ import datetime, time
 import aiohttp
 import discord
 
-from discord.ext import commands
+from discord.ext import commands,tasks
 from imgurpython import ImgurClient
 from config import *
 
@@ -35,7 +35,7 @@ async def change_pr():
 #bot login
 @client.event
 async def on_ready():
-    change_pr().start()
+    await change_pr()
     print(f"We have logged in as {client.user}")
     global s
     s = time.time()
