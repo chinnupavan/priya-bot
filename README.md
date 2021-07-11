@@ -7,7 +7,7 @@ A multipurpose discord bot
 
 Feel free to add a star ⭐ to the repository to promote the project!
 
-### Supporters
+## Supporters
 
 👏 A big thank you goes to all the supporters of this project!
 
@@ -20,3 +20,9 @@ You prove that the priya-bot has some value for you!
 ### Contributors
 
 [![contributors image](https://contrib.rocks/image?repo=chinnupavan/priya-bot)](https://github.com/chinnupavan/priya-bot/contributors)
+
+## Roadmap
+
+Visit our [Roadmap] for planned and upcoming features.
+
+[Roadmap]: https://github.com/chinnupavan/priya-bot/projects/1
