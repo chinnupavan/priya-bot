@@ -4,35 +4,58 @@ import json
 import os
 import platform
 import random
+import sqlite3
 from datetime import timedelta
 import datetime, time
 import aiohttp
 import discord
 
-from discord.ext import commands
+
+from discord.ext import commands,tasks
 from imgurpython import ImgurClient
 from config import *
 
 client=commands.Bot(command_prefix=PREFIX)
 client.remove_command("help")
 
-#imgur client
-a=''
-b=''
+#imgur
+a=imgur_a
+b=imgur_b
 cc=ImgurClient(a,b)
 
-async def get_bank_data():
-    with open("bank.json", "r") as f:
-        users = json.load(f)
 
-    return users
+async def open_acc(user):
+    db = sqlite3.connect('bank.db')
+    cursor = db.cursor()
+    cursor.execute(f"SELECT * FROM main WHERE member_id = {user.id}")
+    result = cursor.fetchone()
+
+    if result:
+        return
+    if not result:
+        sql = "INSERT INTO main(member_id, wallet, bank,gold,diamonds,silver,staff,machine) VALUES(?,?,?,?,?,?,?,?)"
+        val = (user.id, 500, 0,0,0,0,0,0)
+
+    cursor.execute(sql, val)
+    db.commit()
+    cursor.close()
+    db.close()
+
+@tasks.loop(minutes=1)
+async def change_pr():
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"p!help | {len(client.guilds)} servers"))
+    await asyncio.sleep(30)
+    await client.change_presence(
+        activity=discord.Activity(type=discord.ActivityType.playing, name=f"p!help | {len(client.users)} users"))
 
 
 #bot login
 @client.event
 async def on_ready():
-    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="p!help"))
+
+    #await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="p!help"))
     print(f"We have logged in as {client.user}")
+    print(f"ID {client.user.id}")
     global s
     s = time.time()
 
@@ -44,9 +67,9 @@ async def on_ready():
                 print((f"loaded {folder}"))
             except Exception as e:
                 print(f"{e}")
+    await change_pr.start()
 
 #-------------------------------message events---------------------------#
-#messages with prefix
 @client.event
 async def on_message(message):
     if not message.author.bot:
@@ -61,6 +84,15 @@ async def on_message(message):
                 url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=128".format(message.author))
             await message.channel.send(embed=embedd)
 
+        if 'p!nsfw' in message.content.lower():
+            if message.channel.is_nsfw():
+                it = cc.get_album_images('HtpJJL4')
+                m = random.choice(it)
+                em = discord.Embed()
+                em.set_image(url=m.link)
+                await message.channel.send(embed=em)
+            else:
+                await message.channel.send("Please use this command in NSFW channel"+message.author.mention)
 
 
     # to stop message event
@@ -80,8 +112,17 @@ async def on_command_error(ctx,error):
         elif "spin" in ctx.message.content:
             await ctx.send("please try again in : "+mes)
         elif "mining" in ctx.message.content:
-            users = await get_bank_data()
-            val=users[str(ctx.author.id)]["machine"]
+            await open_acc(ctx.author)
+            member = ctx.author
+
+            db = sqlite3.connect('bank.db')
+            cursor = db.cursor()
+            cursor.execute(f"SELECT * FROM main WHERE member_id = {member.id}")
+            result = cursor.fetchone()
+            db.commit()
+            cursor.close()
+
+            val = result[6]
             if val>=1:
                 secs = error.retry_after-(21600//2)
                 mes = f"{secs // 3600:02.0f}:{(secs // 60) % 60:02.0f}:{secs % 60:02.0f}"
@@ -92,6 +133,7 @@ async def on_command_error(ctx,error):
                 await ctx.send("Mining will end in : " + mes)
 
 
+    #await ctx.send("timee")
 #-----------------------simple commands-------------------------#
 @client.command()
 async def btc(ctx):
@@ -126,6 +168,10 @@ async def uptime(ctx):
     except discord.HTTPException:
         await ctx.send("Current uptime: " + text)
 
+#get user id
+@client.command()
+async def userid(ctx,member:discord.Member):
+    await ctx.send(member.id)
 
 
 client.run(TOKEN,reconnect=True)

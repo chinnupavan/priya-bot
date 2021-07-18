@@ -87,7 +87,7 @@ class Help(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    # -----------------------multi help page having some issues ,i will update it later------------------------------#
+    # -----------------------multi help page------------------------------#
 
     @commands.command()
     async def help1(self, ctx: commands.Context):
