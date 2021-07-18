@@ -10,18 +10,30 @@ import datetime, time
 import aiohttp
 import discord
 
+<<<<<<< HEAD
 
 from discord.ext import commands,tasks
+=======
+from discord.ext import commands, tasks
+>>>>>>> e61eeb796da7f85d9a73b9185745234337452061
 from imgurpython import ImgurClient
 from config import *
 
-client=commands.Bot(command_prefix=PREFIX)
+client = commands.Bot(command_prefix=PREFIX)
 client.remove_command("help")
 
+<<<<<<< HEAD
 #imgur
 a=imgur_a
 b=imgur_b
 cc=ImgurClient(a,b)
+=======
+#imgur client
+a = ''
+b = ''
+cc = ImgurClient(a, b)
+
+>>>>>>> e61eeb796da7f85d9a73b9185745234337452061
 
 
 async def open_acc(user):
@@ -49,11 +61,22 @@ async def change_pr():
         activity=discord.Activity(type=discord.ActivityType.playing, name=f"p!help | {len(client.users)} users"))
 
 
+@tasks.loop(minutes=15)
+async def change_pr():
+    await client.change_presence(activity=discord.Activity(
+        type=discord.ActivityType.listening,
+        name=f"p!help | {len(client.guilds)} servers"))
+
+
 #bot login
 @client.event
 async def on_ready():
+<<<<<<< HEAD
 
     #await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="p!help"))
+=======
+    await change_pr()
+>>>>>>> e61eeb796da7f85d9a73b9185745234337452061
     print(f"We have logged in as {client.user}")
     print(f"ID {client.user.id}")
     global s
@@ -69,11 +92,14 @@ async def on_ready():
                 print(f"{e}")
     await change_pr.start()
 
+
 #-------------------------------message events---------------------------#
 @client.event
 async def on_message(message):
     if not message.author.bot:
-        print(f"{message.channel}: {message.author}: {message.author.name}: {message.content}")
+        print(
+            f"{message.channel}: {message.author}: {message.author.name}: {message.content}"
+        )
         if message.content.lower() == "p!id":
             em = discord.Embed(description=message.author, color=0x79FF08)
             await message.channel.send(embed=em)
@@ -81,9 +107,12 @@ async def on_message(message):
         if "p!avatar" in message.content.lower():
             embedd = discord.Embed(title=message.author.name, colour=0x0DDCFF)
             embedd.set_image(
-                url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=128".format(message.author))
+                url=
+                "https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=128"
+                .format(message.author))
             await message.channel.send(embed=embedd)
 
+<<<<<<< HEAD
         if 'p!nsfw' in message.content.lower():
             if message.channel.is_nsfw():
                 it = cc.get_album_images('HtpJJL4')
@@ -95,23 +124,27 @@ async def on_message(message):
                 await message.channel.send("Please use this command in NSFW channel"+message.author.mention)
 
 
+=======
+>>>>>>> e61eeb796da7f85d9a73b9185745234337452061
     # to stop message event
     await client.process_commands(message)
 
 
 #-----------------commands errors ---------------------#
 
+
 #invalid commands
 @client.event
-async def on_command_error(ctx,error):
-    if isinstance(error,commands.CommandOnCooldown):
-        secs=error.retry_after
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandOnCooldown):
+        secs = error.retry_after
         mes = f"{secs // 3600:02.0f}:{(secs // 60) % 60:02.0f}:{secs % 60:02.0f}"
         if "tada" in ctx.message.content:
-            await ctx.send("wait for : " + mes )
+            await ctx.send("wait for : " + mes)
         elif "spin" in ctx.message.content:
-            await ctx.send("please try again in : "+mes)
+            await ctx.send("please try again in : " + mes)
         elif "mining" in ctx.message.content:
+<<<<<<< HEAD
             await open_acc(ctx.author)
             member = ctx.author
 
@@ -125,6 +158,12 @@ async def on_command_error(ctx,error):
             val = result[6]
             if val>=1:
                 secs = error.retry_after-(21600//2)
+=======
+            users = await get_bank_data()
+            val = users[str(ctx.author.id)]["machine"]
+            if val >= 1:
+                secs = error.retry_after - (21600 // 2)
+>>>>>>> e61eeb796da7f85d9a73b9185745234337452061
                 mes = f"{secs // 3600:02.0f}:{(secs // 60) % 60:02.0f}:{secs % 60:02.0f}"
                 await ctx.send("Mining will end in : " + mes)
             else:
@@ -143,20 +182,25 @@ async def btc(ctx):
         response = await raw_response.text()
         response = json.loads(response)
         #await ctx.channel.send("Bitcoin price is: INR " + response['bpi']['INR']['rate'])
-        st=response['bpi']['INR']['rate']+" INR"
-        embedd = discord.Embed(description="<a:btcinr:860587207398916096>"+" Bitcoin price : `{0}`".format(st), colour=0x0DDCFF)
+        st = response['bpi']['INR']['rate'] + " INR"
+        embedd = discord.Embed(description="<a:btcinr:860587207398916096>" +
+                               " Bitcoin price : `{0}`".format(st),
+                               colour=0x0DDCFF)
         await ctx.channel.send(embed=embedd)
 
+
 @client.command()
-async def clear(ctx,args):
-    s =int(args)
+async def clear(ctx, args):
+    s = int(args)
     dele = await ctx.channel.purge(limit=s)
-    emd = discord.Embed(description=f"{len(dele):,} messages have been deleted.")
+    emd = discord.Embed(
+        description=f"{len(dele):,} messages have been deleted.")
     await ctx.channel.send(embed=emd, delete_after=3)
+
 
 @client.command()
 async def uptime(ctx):
-    ss=platform.system()
+    ss = platform.system()
     current_time = time.time()
     difference = int(round(current_time - s))
     text = str(datetime.timedelta(seconds=difference))
@@ -173,6 +217,4 @@ async def uptime(ctx):
 async def userid(ctx,member:discord.Member):
     await ctx.send(member.id)
 
-
-client.run(TOKEN,reconnect=True)
-
+client.run(TOKEN, reconnect=True)
