@@ -10,18 +10,17 @@ import datetime, time
 import aiohttp
 import discord
 
-
-from discord.ext import commands,tasks
+from discord.ext import commands, tasks
 from imgurpython import ImgurClient
 from config import *
 
-client=commands.Bot(command_prefix=PREFIX)
+client = commands.Bot(command_prefix=PREFIX)
 client.remove_command("help")
 
 #imgur
-a=imgur_a
-b=imgur_b
-cc=ImgurClient(a,b)
+a = imgur_a
+b = imgur_b
+cc = ImgurClient(a, b)
 
 
 async def open_acc(user):
@@ -34,19 +33,23 @@ async def open_acc(user):
         return
     if not result:
         sql = "INSERT INTO main(member_id, wallet, bank,gold,diamonds,silver,staff,machine) VALUES(?,?,?,?,?,?,?,?)"
-        val = (user.id, 500, 0,0,0,0,0,0)
+        val = (user.id, 500, 0, 0, 0, 0, 0, 0)
 
     cursor.execute(sql, val)
     db.commit()
     cursor.close()
     db.close()
 
+
 @tasks.loop(minutes=1)
 async def change_pr():
-    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"p!help | {len(client.guilds)} servers"))
+    await client.change_presence(activity=discord.Activity(
+        type=discord.ActivityType.listening,
+        name=f"p!help | {len(client.guilds)} servers"))
     await asyncio.sleep(30)
     await client.change_presence(
-        activity=discord.Activity(type=discord.ActivityType.playing, name=f"p!help | {len(client.users)} users"))
+        activity=discord.Activity(type=discord.ActivityType.playing,
+                                  name=f"p!help | {len(client.users)} users"))
 
 
 #bot login
@@ -69,11 +72,14 @@ async def on_ready():
                 print(f"{e}")
     await change_pr.start()
 
+
 #-------------------------------message events---------------------------#
 @client.event
 async def on_message(message):
     if not message.author.bot:
-        print(f"{message.channel}: {message.author}: {message.author.name}: {message.content}")
+        print(
+            f"{message.channel}: {message.author}: {message.author.name}: {message.content}"
+        )
         if message.content.lower() == "p!id":
             em = discord.Embed(description=message.author, color=0x79FF08)
             await message.channel.send(embed=em)
@@ -81,7 +87,9 @@ async def on_message(message):
         if "p!avatar" in message.content.lower():
             embedd = discord.Embed(title=message.author.name, colour=0x0DDCFF)
             embedd.set_image(
-                url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=128".format(message.author))
+                url=
+                "https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=128"
+                .format(message.author))
             await message.channel.send(embed=embedd)
 
         if 'p!nsfw' in message.content.lower():
@@ -92,8 +100,9 @@ async def on_message(message):
                 em.set_image(url=m.link)
                 await message.channel.send(embed=em)
             else:
-                await message.channel.send("Please use this command in NSFW channel"+message.author.mention)
-
+                await message.channel.send(
+                    "Please use this command in NSFW channel" +
+                    message.author.mention)
 
     # to stop message event
     await client.process_commands(message)
@@ -101,16 +110,17 @@ async def on_message(message):
 
 #-----------------commands errors ---------------------#
 
+
 #invalid commands
 @client.event
-async def on_command_error(ctx,error):
-    if isinstance(error,commands.CommandOnCooldown):
-        secs=error.retry_after
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandOnCooldown):
+        secs = error.retry_after
         mes = f"{secs // 3600:02.0f}:{(secs // 60) % 60:02.0f}:{secs % 60:02.0f}"
         if "tada" in ctx.message.content:
-            await ctx.send("wait for : " + mes )
+            await ctx.send("wait for : " + mes)
         elif "spin" in ctx.message.content:
-            await ctx.send("please try again in : "+mes)
+            await ctx.send("please try again in : " + mes)
         elif "mining" in ctx.message.content:
             await open_acc(ctx.author)
             member = ctx.author
@@ -123,8 +133,8 @@ async def on_command_error(ctx,error):
             cursor.close()
 
             val = result[6]
-            if val>=1:
-                secs = error.retry_after-(21600//2)
+            if val >= 1:
+                secs = error.retry_after - (21600 // 2)
                 mes = f"{secs // 3600:02.0f}:{(secs // 60) % 60:02.0f}:{secs % 60:02.0f}"
                 await ctx.send("Mining will end in : " + mes)
             else:
@@ -132,8 +142,9 @@ async def on_command_error(ctx,error):
                 mes = f"{secs // 3600:02.0f}:{(secs // 60) % 60:02.0f}:{secs % 60:02.0f}"
                 await ctx.send("Mining will end in : " + mes)
 
-
     #await ctx.send("timee")
+
+
 #-----------------------simple commands-------------------------#
 @client.command()
 async def btc(ctx):
@@ -143,20 +154,25 @@ async def btc(ctx):
         response = await raw_response.text()
         response = json.loads(response)
         #await ctx.channel.send("Bitcoin price is: INR " + response['bpi']['INR']['rate'])
-        st=response['bpi']['INR']['rate']+" INR"
-        embedd = discord.Embed(description="<a:btcinr:860587207398916096>"+" Bitcoin price : `{0}`".format(st), colour=0x0DDCFF)
+        st = response['bpi']['INR']['rate'] + " INR"
+        embedd = discord.Embed(description="<a:btcinr:860587207398916096>" +
+                               " Bitcoin price : `{0}`".format(st),
+                               colour=0x0DDCFF)
         await ctx.channel.send(embed=embedd)
 
+
 @client.command()
-async def clear(ctx,args):
-    s =int(args)
+async def clear(ctx, args):
+    s = int(args)
     dele = await ctx.channel.purge(limit=s)
-    emd = discord.Embed(description=f"{len(dele):,} messages have been deleted.")
+    emd = discord.Embed(
+        description=f"{len(dele):,} messages have been deleted.")
     await ctx.channel.send(embed=emd, delete_after=3)
+
 
 @client.command()
 async def uptime(ctx):
-    ss=platform.system()
+    ss = platform.system()
     current_time = time.time()
     difference = int(round(current_time - s))
     text = str(datetime.timedelta(seconds=difference))
@@ -168,11 +184,11 @@ async def uptime(ctx):
     except discord.HTTPException:
         await ctx.send("Current uptime: " + text)
 
+
 #get user id
 @client.command()
-async def userid(ctx,member:discord.Member):
+async def userid(ctx, member: discord.Member):
     await ctx.send(member.id)
 
 
-client.run(TOKEN,reconnect=True)
-
+client.run(TOKEN, reconnect=True)
