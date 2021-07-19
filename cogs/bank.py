@@ -222,7 +222,7 @@ class Bank(commands.Cog):
             await remove_bal(ctx.author, amt)
             await add_bankbal(ctx.author, amt)
 
-            await ctx.send(f"Successfully deposited f{amount}!")
+            await ctx.send(f"Successfully deposited **{amount}**!")
 
         cursor.execute(sql, val)
         db.commit()
