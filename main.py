@@ -190,5 +190,14 @@ async def uptime(ctx):
 async def userid(ctx, member: discord.Member):
     await ctx.send(member.id)
 
+@client.command()
+@commands.is_owner()
+async def reload(ctx, *, name: str):
+    try:
+        bot.reload_extension(f"cogs.{name}")
+    except Exception as e:
+        return await ctx.send(e)
+    await ctx.send(f'"**{name}**" Cog 
+
 
 client.run(TOKEN, reconnect=True)
