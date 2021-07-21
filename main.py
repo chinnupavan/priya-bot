@@ -44,7 +44,7 @@ async def open_acc(user):
 @tasks.loop(minutes=1)
 async def change_pr():
     await client.change_presence(activity=discord.Activity(
-        type=discord.ActivityType.listening,
+        type=discord.ActivityType.watching,
         name=f"p!help | {len(client.guilds)} servers"))
     await asyncio.sleep(30)
     await client.change_presence(
@@ -77,14 +77,15 @@ async def on_ready():
 @client.event
 async def on_message(message):
     if not message.author.bot:
+        lower = message.content.lower()
         print(
             f"{message.channel}: {message.author}: {message.author.name}: {message.content}"
         )
-        if message.content.lower() == "p!id":
+        if lower == "p!id":
             em = discord.Embed(description=message.author, color=0x79FF08)
             await message.channel.send(embed=em)
 
-        if "p!avatar" in message.content.lower():
+        if "p!avatar" in lower:
             embedd = discord.Embed(title=message.author.name, colour=0x0DDCFF)
             embedd.set_image(
                 url=
@@ -92,7 +93,7 @@ async def on_message(message):
                 .format(message.author))
             await message.channel.send(embed=embedd)
 
-        if 'p!nsfw' in message.content.lower():
+        if "p!nsfw" in lower:
             if message.channel.is_nsfw():
                 it = cc.get_album_images('HtpJJL4')
                 m = random.choice(it)
