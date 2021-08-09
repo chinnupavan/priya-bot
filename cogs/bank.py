@@ -569,7 +569,7 @@ class Bank(commands.Cog):
 
     @commands.command()
     async def vote(self, ctx: commands.Context):
-        self.gg_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0NDk4ODExODYzNzc0MDA0MiIsImJvdCI6dHJ1ZSwiaWF0IjoxNjI4MjQ1Mjk3fQ.BiYdjM3Q5wV5lWCz0NURA7OB-sbFiehpuyC2A6unZGY"
+        self.gg_token = ""
         self.bot_id = "844988118637740042"
         self.user_id = ctx.author.id
         self.agent = 'DBL-Python-Library (https://github.com/top-gg/DBL-Python-Library 0.4.0) Python/{0[0]}.{0[' '1]} aiohttp/{1}'.format(
