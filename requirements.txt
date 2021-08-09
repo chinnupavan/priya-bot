@@ -1,3 +1,8 @@
 discord.py
+psutil
 aiohttp
-imgurpython
+youtube_dl
+discord-components
+pillow
+phonenumbers
+requests
