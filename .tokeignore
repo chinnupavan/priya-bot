@@ -1,7 +1,0 @@
-*.md
-CODEOWNERS
-LICENSE
-.github/workflows/*.yml
-.github/*.yml
-*ignore*
-*.json
