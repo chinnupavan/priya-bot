@@ -1,0 +1,8 @@
+discord.py
+psutil
+aiohttp
+youtube_dl
+discord-components
+pillow
+phonenumbers
+requests
